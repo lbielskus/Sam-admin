@@ -18,17 +18,17 @@ export default function EditBlogPost() {
   }, [id]);
 
   return (
-    <div className='max-sm:p-4'>
-      <div className='sm:flex sm:items-center sm:justify-center'>
+    <div className='max-sm:p-4 '>
+      <div className='sm:flex sm:items-center sm:justify-center '>
         <div className='text-center sm:text-left'>
-          <p className='my-4 text-xl text-red-500'>
+          <p className='my-4 text-xl text-red-600'>
             Editing Blog Post:{' '}
-            <span className='text-green-600'>{post?.title}</span>
+            <span className='text-green-700'>{post?.title}</span>
           </p>
         </div>
       </div>
-      <hr className='my-8 h-px border-0 bg-gray-300' />
-      <div className='my-10 max-sm:my-12'>
+      <hr className='my-8 h-px border-0 bg-gray-300 ' />
+      <div className='my-10 max-sm:my-12 pb-[100px] '>
         {post && <BlogPost title={post.title} content={post.content} />}
       </div>
     </div>
