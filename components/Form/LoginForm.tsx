@@ -12,9 +12,6 @@ const LoginForm = () => {
   const [submitError, setSubmitError] = useState('');
   const router = useRouter();
 
-  // Get the allowed email from environment variable
-  const allowedEmail = process.env.NEXT_PUBLIC_ALLOWED_EMAIL;
-
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
@@ -28,12 +25,6 @@ const LoginForm = () => {
 
     try {
       setLoading(true);
-
-      if (email !== allowedEmail) {
-        setSubmitError(`Only Admins is allowed to log in.`);
-        setLoading(false);
-        return;
-      }
 
       const loginRes = await loginUser({ email, password });
 
