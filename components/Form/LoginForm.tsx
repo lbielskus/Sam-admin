@@ -56,7 +56,7 @@ const LoginForm = () => {
   }, [loading, submitError]);
 
   return (
-    <section className='bg-gray-50 dark:bg-gray-300'>
+    <section className='bg-gray-50 dark:bg-gray-50'>
       <div className='flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0'>
         <Link
           className='mb-10 flex gap-1 items-center text-text font-medium text-lg hover:text-zinc-400 '
