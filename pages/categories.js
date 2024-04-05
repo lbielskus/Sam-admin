@@ -65,6 +65,20 @@ export default function Categories() {
     toast.success('Category deleted!!');
   }
 
+  async function uploadImage(file) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await axios.post('/api/upload', formData);
+      const uploadedImageUrl = response.data.url;
+      setImageUrl(uploadedImageUrl);
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
+    }
+  }
+
   if (!session) {
     return null;
   }
