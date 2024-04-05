@@ -65,35 +65,17 @@ export default function Categories() {
     toast.success('Category deleted!!');
   }
 
-  async function uploadImage(ev) {
-    const files = ev.target?.files;
-    if (files?.length > 0) {
-      setIsUploading(true);
-      const uploadImagesQueue = [];
-
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        uploadImagesQueue.push(
-          axios.post('/api/upload', formData).then((res) => {
-            return res.data.url;
-          })
-        );
-      }
-
-      try {
-        const uploadedImageUrls = await Promise.all(uploadImagesQueue);
-        setImages(uploadedImageUrls);
-        setIsUploading(false);
-        toast.success('Images uploaded');
-      } catch (error) {
-        console.error('Error uploading images:', error);
-        setIsUploading(false);
-        toast.error('Failed to upload images');
-      }
-    } else {
-      toast.error('No files selected!');
+  async function uploadImage(file) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await axios.post('/api/upload', formData);
+      const uploadedImage = response.data.url;
+      setImages(uploadedImage); // Update the state with the uploaded image URL
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
     }
   }
 
