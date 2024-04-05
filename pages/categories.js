@@ -1,19 +1,24 @@
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function Categories() {
   const { data: session } = useSession();
   const [name, setName] = useState('');
-  const [images, setImages] = useState([]);
+  const [Images, setImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [parentCategory, setParentCategory] = useState('');
   const [editedCategory, setEditedCategory] = useState(null);
-  const [showModal, setShowModal] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
     setShowModal(false);
+  };
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
   };
 
   useEffect(() => {
@@ -30,7 +35,7 @@ export default function Categories() {
 
   async function saveCategory(ev) {
     ev.preventDefault();
-    const data = { name, parentCategory, images };
+    const data = { name, parentCategory, Images };
     if (editedCategory) {
       data._id = editedCategory._id;
       await axios.put('/api/categories', data);
@@ -41,7 +46,7 @@ export default function Categories() {
       toast.success('Category created successfully');
     }
     setName('');
-    setImages([]);
+    setImages('');
     setParentCategory('');
     fetchCategories();
   }
@@ -60,20 +65,17 @@ export default function Categories() {
     toast.success('Category deleted!!');
   }
 
-  async function uploadImages(files) {
+  async function uploadImage(file) {
     try {
       const formData = new FormData();
-      Array.from(files).forEach((file) => {
-        formData.append('file', file);
-      });
-
+      formData.append('file', file);
       const response = await axios.post('/api/upload', formData);
-      const uploadedImages = response.data.urls;
-      setImages((oldImages) => [...oldImages, ...uploadedImages]);
-      toast.success('Images uploaded successfully');
+      const uploadedImage = response.data.url;
+      setImages((oldImages) => [...oldImages, uploadedImage]); // Update the state with the uploaded image URL
+      toast.success('Image uploaded successfully');
     } catch (error) {
-      console.error('Error uploading images:', error);
-      toast.error('Failed to upload images');
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
     }
   }
 
