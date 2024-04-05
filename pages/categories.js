@@ -16,10 +16,6 @@ export default function Categories() {
     setShowModal(false);
   };
 
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
-
   useEffect(() => {
     if (session) {
       fetchCategories();
