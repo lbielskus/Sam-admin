@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 export default function Categories() {
   const { data: session } = useSession();
   const [name, setName] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [Images, setImages] = useState('');
   const [categories, setCategories] = useState([]);
   const [parentCategory, setParentCategory] = useState('');
   const [editedCategory, setEditedCategory] = useState(null);
@@ -35,7 +35,7 @@ export default function Categories() {
 
   async function saveCategory(ev) {
     ev.preventDefault();
-    const data = { name, parentCategory, imageUrl };
+    const data = { name, parentCategory, Images };
     if (editedCategory) {
       data._id = editedCategory._id;
       await axios.put('/api/categories', data);
@@ -46,7 +46,7 @@ export default function Categories() {
       toast.success('Category created successfully');
     }
     setName('');
-    setImageUrl(''); // Reset the imageUrl state after saving
+    setImages(''); // Reset the Images state after saving
     setParentCategory('');
     fetchCategories();
   }
@@ -70,8 +70,8 @@ export default function Categories() {
       const formData = new FormData();
       formData.append('file', file);
       const response = await axios.post('/api/upload', formData);
-      const uploadedImageUrl = response.data.url;
-      setImageUrl(uploadedImageUrl); // Update the state with the uploaded image URL
+      const uploadedImages = response.data.url;
+      setImages(uploadedImages); // Update the state with the uploaded image URL
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Error uploading image:', error);

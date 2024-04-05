@@ -9,9 +9,7 @@ const categorySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Category',
   },
-  imageUrl: {
-    type: String,
-  },
+  images: [{ type: String }],
 });
 
 export const Category = models.Category || model('Category', categorySchema);
