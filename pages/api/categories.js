@@ -19,8 +19,14 @@ export default async function handle(req, res) {
     }
 
     if (method === 'GET') {
-      const categories = await Category.find();
-      res.json(categories);
+      if (req.query?.id) {
+        res.json(
+          await Category.findOne({ _id: req.query.id }).populate('parent')
+        );
+      } else {
+        const categories = await Category.find().populate('parent');
+        res.json(categories);
+      }
     }
 
     if (method === 'PUT') {
