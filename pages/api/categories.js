@@ -13,7 +13,7 @@ export default async function handle(req, res) {
       const categoryDoc = await Category.create({
         name,
         parent: parentCategoryId ? parentCategoryId : null,
-        imageUrl,
+        imageUrl, // Save the imageUrl in the database
       });
       res.json(categoryDoc);
     }
@@ -30,11 +30,11 @@ export default async function handle(req, res) {
     }
 
     if (method === 'PUT') {
-      const { name, parentCategoryId, _id } = req.body;
+      const { name, parentCategoryId, _id, imageUrl } = req.body;
 
       const categoryDoc = await Category.findOneAndUpdate(
         { _id },
-        { name, parent: parentCategoryId ? parentCategoryId : null },
+        { name, parent: parentCategoryId ? parentCategoryId : null, imageUrl },
         { new: true }
       );
       res.json(categoryDoc);

@@ -46,7 +46,7 @@ export default function Categories() {
       toast.success('Category created successfully');
     }
     setName('');
-    setImageUrl('');
+    setImageUrl(''); // Reset the imageUrl state after saving
     setParentCategory('');
     fetchCategories();
   }
@@ -71,7 +71,7 @@ export default function Categories() {
       formData.append('file', file);
       const response = await axios.post('/api/upload', formData);
       const uploadedImageUrl = response.data.url;
-      setImageUrl(uploadedImageUrl);
+      setImageUrl(uploadedImageUrl); // Update the state with the uploaded image URL
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Error uploading image:', error);
