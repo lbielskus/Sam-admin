@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 export default function Categories() {
   const { data: session } = useSession();
   const [name, setName] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [categories, setCategories] = useState([]);
   const [parentCategory, setParentCategory] = useState('');
   const [editedCategory, setEditedCategory] = useState(null);
@@ -34,7 +35,7 @@ export default function Categories() {
 
   async function saveCategory(ev) {
     ev.preventDefault();
-    const data = { name, parentCategory };
+    const data = { name, parentCategory, imageUrl };
     if (editedCategory) {
       data._id = editedCategory._id;
       await axios.put('/api/categories', data);
@@ -45,6 +46,7 @@ export default function Categories() {
       toast.success('Category created successfully');
     }
     setName('');
+    setImageUrl('');
     setParentCategory('');
     fetchCategories();
   }
@@ -130,6 +132,19 @@ export default function Categories() {
                         </option>
                       ))}
                   </select>
+                </div>
+                <div>
+                  {/* Input field for uploading image */}
+                  <input
+                    type='file'
+                    accept='image/*'
+                    onChange={(ev) => {
+                      const file = ev.target.files[0];
+                      if (file) {
+                        uploadImage(file);
+                      }
+                    }}
+                  />
                 </div>
                 <button
                   type='submit'
