@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
+import mongoose, { model, Schema, models } from 'mongoose';
 
-const categorySchema = new mongoose.Schema({
+const categorySchema = new Schema({
   name: {
     type: String,
     required: true,
   },
   parent: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Category',
   },
   imageUrl: {
@@ -14,7 +14,4 @@ const categorySchema = new mongoose.Schema({
   },
 });
 
-const Category =
-  mongoose.models.Category || mongoose.model('Category', categorySchema);
-
-export default Category;
+export const Category = models.Category || model('Category', categorySchema);
