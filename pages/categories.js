@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 export default function Categories() {
   const { data: session } = useSession();
   const [name, setName] = useState('');
-  const [Images, setImages] = useState('');
+  const [Images, setImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [parentCategory, setParentCategory] = useState('');
   const [editedCategory, setEditedCategory] = useState(null);
@@ -71,7 +71,7 @@ export default function Categories() {
       formData.append('file', file);
       const response = await axios.post('/api/upload', formData);
       const uploadedImage = response.data.url;
-      setImages(uploadedImage); // Update the state with the uploaded image URL
+      setImages((oldImages) => [...oldImages, uploadedImage]); // Update the state with the uploaded image URL
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Error uploading image:', error);
