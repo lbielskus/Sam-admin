@@ -1,25 +1,18 @@
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import Spinner from '../components/Spinner';
 
-export default function Categories() {
+export default function Categories({ existingImages }) {
   const { data: session } = useSession();
   const [name, setName] = useState('');
-  const [Images, setImages] = useState([]);
+  const [images, setImages] = useState(existingImages || []);
   const [categories, setCategories] = useState([]);
   const [parentCategory, setParentCategory] = useState('');
   const [editedCategory, setEditedCategory] = useState(null);
-
-  const [showModal, setShowModal] = useState(false);
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
+  const [isUploading, setIsUploading] = useState(false);
+  const uploadImagesQueue = [];
 
   useEffect(() => {
     if (session) {
@@ -28,27 +21,50 @@ export default function Categories() {
   }, [session]);
 
   function fetchCategories() {
-    axios.get('/api/categories').then((result) => {
-      setCategories(result.data);
-    });
+    axios
+      .get('/api/categories')
+      .then((result) => {
+        setCategories(result.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+        toast.error('Failed to fetch categories');
+      });
   }
 
   async function saveCategory(ev) {
     ev.preventDefault();
-    const data = { name, parentCategory, Images };
+    if (isUploading) {
+      await Promise.all(uploadImagesQueue);
+    }
+    if (!name) {
+      toast.error('Name field is required');
+      return;
+    }
+    const data = { name, parentCategory, images };
     if (editedCategory) {
       data._id = editedCategory._id;
-      await axios.put('/api/categories', data);
-      setEditedCategory(null);
-      toast.success('Category updated!!');
+      try {
+        await axios.put('/api/categories', data);
+        setEditedCategory(null);
+        toast.success('Category updated!!');
+      } catch (error) {
+        console.error('Error updating category:', error);
+        toast.error('Failed to update category');
+      }
     } else {
-      await axios.post('/api/categories', data);
-      toast.success('Category created successfully');
+      try {
+        await axios.post('/api/categories', data);
+        toast.success('Category created successfully');
+        setName('');
+        setImages([]);
+        setParentCategory('');
+        fetchCategories();
+      } catch (error) {
+        console.error('Error creating category:', error);
+        toast.error('Failed to create category');
+      }
     }
-    setName('');
-    setImages('');
-    setParentCategory('');
-    fetchCategories();
   }
 
   function editCategory(category) {
@@ -59,23 +75,41 @@ export default function Categories() {
 
   async function deleteCategory(category) {
     const { _id } = category;
-    await axios.delete('/api/categories?_id=' + _id);
-    closeModal();
-    fetchCategories();
-    toast.success('Category deleted!!');
+    try {
+      await axios.delete('/api/categories?_id=' + _id);
+      fetchCategories();
+      toast.success('Category deleted!!');
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      toast.error('Failed to delete category');
+    }
   }
 
-  async function uploadImage(file) {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const response = await axios.post('/api/upload', formData);
-      const uploadedImage = response.data.url;
-      setImages((oldImages) => [...oldImages, uploadedImage]); // Update the state with the uploaded image URL
-      toast.success('Image uploaded successfully');
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Failed to upload image');
+  async function uploadImage(ev) {
+    if (!ev || !ev.target || !ev.target.files) {
+      console.error('Invalid event object:', ev);
+      return;
+    }
+
+    const files = ev.target.files || [];
+    if (files.length > 0) {
+      setIsUploading(true);
+      try {
+        for (const file of files) {
+          const formData = new FormData();
+          formData.append('file', file);
+          const response = await axios.post('/api/upload', formData);
+          const uploadedImage = response.data.links[0];
+
+          setImages((prevImages) => [...prevImages, uploadedImage]);
+        }
+        toast.success('Image uploaded successfully');
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast.error('Failed to upload image');
+      } finally {
+        setIsUploading(false);
+      }
     }
   }
 
@@ -148,16 +182,15 @@ export default function Categories() {
                   </select>
                 </div>
                 <div>
-                  <input
-                    type='file'
-                    accept='image/*'
-                    onChange={(ev) => {
-                      const file = ev.target.files[0];
-                      if (file) {
-                        uploadImage(file);
-                      }
-                    }}
-                  />
+                  {!isUploading && (
+                    <input
+                      type='file'
+                      accept='image/*'
+                      multiple
+                      onChange={uploadImage}
+                    />
+                  )}
+                  {isUploading && <Spinner />}
                 </div>
                 <button
                   type='submit'

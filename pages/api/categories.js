@@ -2,48 +2,51 @@ import { mongooseConnect } from '../../lib/mongoose';
 import { Category } from '../../models/Category';
 
 export default async function handle(req, res) {
-  const { method } = req;
-
   await mongooseConnect();
 
   try {
-    if (method === 'POST') {
+    if (req.method === 'POST') {
       const { name, parentCategoryId, images } = req.body;
+
+      const imageUrls = Array.isArray(images) ? images : [];
 
       const categoryDoc = await Category.create({
         name,
-        parent: parentCategoryId ? parentCategoryId : null,
-        images, // Save the images in the database
+        parent: parentCategoryId || null,
+        images: imageUrls,
       });
       res.json(categoryDoc);
-    }
-
-    if (method === 'GET') {
+    } else if (req.method === 'GET') {
       if (req.query?.id) {
-        res.json(
-          await Category.findOne({ _id: req.query.id }).populate('parent')
+        const category = await Category.findOne({ _id: req.query.id }).populate(
+          'parent'
         );
+        res.json(category);
       } else {
         const categories = await Category.find().populate('parent');
         res.json(categories);
       }
-    }
-
-    if (method === 'PUT') {
+    } else if (req.method === 'PUT') {
       const { name, parentCategoryId, _id, images } = req.body;
+
+      const imageUrls = Array.isArray(images) ? images : [];
 
       const categoryDoc = await Category.findOneAndUpdate(
         { _id },
-        { name, parent: parentCategoryId ? parentCategoryId : null, images },
+        {
+          name,
+          parent: parentCategoryId || null,
+          images: imageUrls,
+        },
         { new: true }
       );
       res.json(categoryDoc);
-    }
-
-    if (method === 'DELETE') {
+    } else if (req.method === 'DELETE') {
       const { _id } = req.query;
       await Category.deleteOne({ _id });
       res.json({ message: 'Category deleted successfully' });
+    } else {
+      res.status(405).json({ error: 'Method Not Allowed' });
     }
   } catch (error) {
     console.error('Error:', error);
