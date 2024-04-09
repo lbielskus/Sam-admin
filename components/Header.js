@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { BsFillImageFill } from 'react-icons/bs';
 
 export default function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -104,6 +105,16 @@ export default function Sidebar() {
                     </svg>
                     <span className='ms-3'>Dashboard</span>
                   </div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href='/images'
+                  className='flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100 dark:hover:bg-gray-700 group dark:text-purple-900 hover:dark:text-white'
+                  onClick={handleLinkClick}
+                >
+                  <BsFillImageFill />
+                  <span className='flex-1 ms-3 whitespace-nowrap'>Images</span>
                 </Link>
               </li>
 
