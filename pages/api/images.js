@@ -6,7 +6,8 @@ export default async function handle(req, res) {
 
   try {
     if (req.method === 'POST') {
-      const { name, description, images, firstBanner, secondBanner } = req.body;
+      const { name, description, images, firstBanner, secondBanner, route } =
+        req.body;
 
       const imageUrls = Array.isArray(images) ? images : [];
 
@@ -16,6 +17,7 @@ export default async function handle(req, res) {
         images: imageUrls,
         firstBanner,
         secondBanner,
+        route,
       });
       res.json(mediaDoc);
     } else if (req.method === 'GET') {
@@ -27,8 +29,15 @@ export default async function handle(req, res) {
         res.json(categories);
       }
     } else if (req.method === 'PUT') {
-      const { name, description, _id, images, firstBanner, secondBanner } =
-        req.body;
+      const {
+        name,
+        description,
+        _id,
+        images,
+        firstBanner,
+        secondBanner,
+        route,
+      } = req.body;
 
       const imageUrls = Array.isArray(images) ? images : [];
 
@@ -40,6 +49,7 @@ export default async function handle(req, res) {
           images: imageUrls,
           firstBanner,
           secondBanner,
+          route,
         },
         { new: true }
       );
