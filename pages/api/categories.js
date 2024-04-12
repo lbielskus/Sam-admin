@@ -6,7 +6,7 @@ export default async function handle(req, res) {
 
   try {
     if (req.method === 'POST') {
-      const { name, parentCategoryId, images } = req.body;
+      const { name, parentCategoryId, images, description } = req.body;
 
       const imageUrls = Array.isArray(images) ? images : [];
 
@@ -14,6 +14,7 @@ export default async function handle(req, res) {
         name,
         parent: parentCategoryId || null,
         images: imageUrls,
+        description,
       });
       res.json(categoryDoc);
     } else if (req.method === 'GET') {
@@ -27,7 +28,7 @@ export default async function handle(req, res) {
         res.json(categories);
       }
     } else if (req.method === 'PUT') {
-      const { name, parentCategoryId, _id, images } = req.body;
+      const { name, parentCategoryId, _id, images, description } = req.body;
 
       const imageUrls = Array.isArray(images) ? images : [];
 
@@ -37,6 +38,7 @@ export default async function handle(req, res) {
           name,
           parent: parentCategoryId || null,
           images: imageUrls,
+          description,
         },
         { new: true }
       );

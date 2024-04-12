@@ -13,6 +13,7 @@ export default function Categories({ existingImages }) {
   const [editedCategory, setEditedCategory] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const uploadImagesQueue = [];
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (session) {
@@ -41,7 +42,15 @@ export default function Categories({ existingImages }) {
       toast.error('Name field is required');
       return;
     }
-    const data = { name, parentCategory, images };
+
+    // Use parentCategory instead of parentCategoryID
+    const data = {
+      name,
+      parentCategoryId: parentCategory,
+      images,
+      description,
+    };
+
     if (editedCategory) {
       data._id = editedCategory._id;
       try {
@@ -191,6 +200,14 @@ export default function Categories({ existingImages }) {
                     />
                   )}
                   {isUploading && <Spinner />}
+                </div>
+                <div>
+                  <textarea
+                    value={description}
+                    onChange={(ev) => setDescription(ev.target.value)}
+                    className='...'
+                    placeholder='Category Description'
+                  />
                 </div>
                 <button
                   type='submit'

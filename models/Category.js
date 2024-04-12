@@ -10,6 +10,10 @@ const categorySchema = new Schema({
     ref: 'Category',
   },
   images: [{ type: String }],
+  description: {
+    type: String,
+    default: '',
+  },
 });
 
 export const Category = models.Category || model('Category', categorySchema);
